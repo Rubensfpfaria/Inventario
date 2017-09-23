@@ -1,0 +1,76 @@
+#'Ajuste de modelo Schumacher&Hall
+#'Y= A+BX+2
+#'V= B0+B1 Ln DAP + B2 LnHt
+#'title: Ajuste e seleção de modelos lineares múltiplos com transformação da variável dependente
+#'author: Rubens Francisco Pereira de Faria
+#'date: 21/09/2017
+
+dados<-read.csv2('cubagem.csv');      #entrou com os dados
+
+View(dados);                          #certeza se entraram os dados, visualizar
+
+names(dados);                         #mostra o cabeçalho do data.frame
+
+x11();                                #mostra os gráficos na interface do R project, não do Rstuio
+
+
+#'ajuste propriamente dito
+#Modelo proposto por Schumacher & Hall (Log)
+
+modelo<-'log(vicc)~log(dap)+log(ht)';
+
+ajlin<-lm(modelo,dados); #modelo, dados (diz onde estão os dados)
+
+anova(ajlin);            #realiza uma análise de variância           >>>CAI NA PROVAAAAAAAA!!!<<< SABER INTERPRETAR
+
+sumario<-summary(ajlin);          #dita 
+
+#Índice de Furnival
+
+y<-dados$vicc;
+D(expression(log(y)),'y');
+dy<-1/y;
+
+medgeo<-exp(mean(log(dy)));
+syx_log<-sumario$sigma;         #erro padrão residual (ln m³)
+
+IF<-1/medgeo*syx_log; #Índice de Furnival (m³)
+
+x11()
+par(mfrow=c(1,2)) #divide a tela do gráfico em duas
+
+plot(exp(predict(ajlin)),rstudent(ajlin),
+     pch='*', col='dark red',xlab='volume estimado (m³)',
+     ylab='Resíduos "studentizados"')
+     ylim=c(-3,3)
+abline(h=0);
+
+tsup<-qt(0.975, nrow(dados)-1)
+tinf<-qt(0.025, nrow(dados)-1)
+
+abline(h=tsup, lty=2)
+abline(h=tinf, lty=2)
+
+library(fBasics)
+qqnormPlot(as.vector(residuals(ajlin))) #gera grafico que se na reta = normal, vermelho = intervalo de confiança
+
+x11()
+
+plot(predict(ajlin),rstudent(ajlin),
+     pch='*', col='dark red',xlab='volume estimado (m³)',
+     ylab='Resíduos "studentizados"')
+ylim=c(-3,3)
+abline(h=0);
+
+tsup<-qt(0.975, nrow(dados)-1)
+tinf<-qt(0.025, nrow(dados)-1)
+
+abline(h=tsup, lty=2)
+abline(h=tinf, lty=2)
+
+x11()
+
+ii<-identify(predict(ajlin),rstudent(ajlin));  #ativa para clicar e selecionar os pontos fora
+View(dados[ii,]);
+dados<-dados[-ii,];
+View(dados[-ii,])
