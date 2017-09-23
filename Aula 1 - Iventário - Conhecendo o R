@@ -1,0 +1,156 @@
+#'title: Conhecendo o R - aula 1 de Inventário Florestal
+#'author: Rubens Francisco Pereira de Faria
+#'date: 14/09/2017
+
+#'Vetores
+#' O símbolo = não foi inicialmente inserido no R, era utilizado "->", mas hoje foi inserido e dá 
+#' na mesma
+
+#'Se for inserir mais que um comando por linha, inserir um ponto e virgula (;)
+
+v<-1; 
+b<-c (3,5,7,9);
+print(b);
+
+#'Dimensão do vetor:
+
+length(b);
+
+#'como saber valor na posição n, onde n = posição dentre os valores
+b[3] 
+
+#'vetor contendo caracteres
+nome<-'Inventário'
+
+disciplinas<-c ('Inventário',"Manejo")
+
+length(nome)
+length(disciplinas)
+
+#' Criar um vetor contendo uma sequência numérica
+
+v<-1:100;
+v2<-seq(2,100,2); #'sequencia os numeros em ïnicio, final, e quanto em quanto
+v2<-seq(from=2, to=100, by=2)
+v2
+
+#'você pode perguntar para o R como que se utiliza um comando, digitando interrogação seguida
+#'da abreviação do comando, e com duas interrogações, vc googla a palavra no R mesmo
+?seq
+??seq
+
+#'vetores predefinidos
+letters;
+LETTERS;
+pi;
+
+#'Matrizes
+
+m<-matrix(0,3,2);
+m1<-matrix(1:10,5,2);
+m2<-matrix(1:10,5,2,byrow=T)
+m3<-matrix(sample(1:10,10,F),5,2);
+
+#'dimensões (matrizes e dataframe)
+
+dim(m2)   #'dimensões da matriz/dataframe
+nrow(m2)  #'número de linhas
+ncol(m2)  #'número de colunas
+
+#perguntar para o R
+
+is.matrix(m2);
+is.matrix(v);
+
+#'indicar o valor de determinada posição na matriz mx
+m1[2,2];
+m1[1:3,2];#'todos os valores das linhas 1 a 3 da coluna 2
+m1[,2];#'todos os valores da coluna 2
+m1[2,];#'todos os valores da linha 2 da matriz mx
+
+#'transpor uma matriz
+mt<-t(m1);
+
+#'inversão de matriz, runif destribuição uniforme
+
+m5<-matrix(runif(9,10,100),3,3);
+minv<-solve(m5);
+is.numeric(m5) #checar se é numérico
+
+sample(60,6,T) #'ou F, para sortear e remover, ou T para repetir numeros sorteados
+  
+#'Data Frame
+
+df<-data.frame(n=1:26,letras=letters);
+
+dim(df)
+nrow(df)
+ncol(df)
+names(df) #'cabeçalho das colunas
+df$letras;#'Todas letras presentes no dataframe
+df$n;  #'O número de N presentes no dataframe
+df$letras[5:20];
+View(df)#'visualização
+edit(df)#'edição
+df$n[3]<-1000;
+
+head(df); #'visualização das primeiras 6 linhas
+tail(df); #'visualização das últimas 6 linhas
+
+#'probabilidade 
+
+#'jogar na mega sena
+
+set.seed(02474);
+sample(1:60,6);
+
+choose(60,60)
+1/choose(60,6)
+1-1/choose(60,6);
+
+combn(5,3);
+
+#'Listas
+
+lista<-list(b=1:100,
+            df=data.frame(n=1:10,rn=rnorm(10)),m=matrix(0,3,2))
+          
+lista;
+lista$b;
+lista$df;
+lista$df$rn;
+
+class(lista);
+class(lista$b);
+class(lista$df);
+class(lista$df$rn);
+
+
+#'importar e exportar arquivos
+#'sessios>setworkspace>source file location
+
+dir(); #'listar os arquivos do diretório de trabalho
+
+dados<-read.csv2('cubagem.csv');
+
+View(dados);
+class(dados);
+names(dados);
+dim(dados);
+
+dados$perc_casca<-(1-dados$visc/dados$vicc)*100;
+View(dados);
+
+dados$perc_casca<-with(dados,                     #arrendondado e inserindo "dados"apenas uma vez)
+                      round((1-visc/vicc)*100,2)
+);
+View(dados)
+
+#'Exportar arquivo cvs
+
+write.csv2(dados,'cubagem com %casca.csv',row.names=F);
+#dados$perc_casca<-NULL; ===>> apagar a coluna
+
+library(xlsx); #para extensão xlsx(ativar)
+library(RODC); #para extrensão xls(ativar)
+require(xlsx); 
